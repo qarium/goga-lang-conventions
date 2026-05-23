@@ -1,5 +1,7 @@
 # General Conventions
 
+Mandatory rules for all Python code in this project.
+
 ## Development
 
 ### Constraints
@@ -8,8 +10,7 @@
 
 ### Running and Debugging
 
-- Code must be executed within a virtualenv environment
-- If a virtualenv environment is not available, it must be created
+- Execute all code within a virtualenv environment. Create it if missing.
 
 ### Imports
 
@@ -17,9 +18,9 @@
 
 ### Data Models
 
-- The pydantic library is used to describe data structures and request/response models
-- All data model classes must use kw_only=True
-- Structures are created with empty defaults (empty string, zero, etc.) unless None is explicitly specified
+- Use pydantic for data models and request/response schemas
+- All data model classes must use `kw_only=True` (Python 3.10+ syntax)
+- Set empty defaults (empty string, zero, etc.) for all fields. Use `None` only where explicitly required.
 
 ### Code Formatting
 
@@ -28,7 +29,7 @@
   - Loops and conditions must be separated by a blank line
   - Data preparation is separated from its processing
   - Processing is separated from returning the result
-  - If a block of code becomes visually dense or hard to read — add a blank line for readability
+  - Add a blank line for visually dense or hard-to-read blocks
 
 ### Docstrings
 
@@ -52,7 +53,7 @@
       """
   ```
 - The brief description (first line) is required, starts with a capital letter, and ends with a period
-- The `Args`, `Returns`, `Raises` sections — only if the function accepts arguments, returns a value, or raises exceptions
+- Include `Args`, `Returns`, `Raises` sections only where applicable
 
 ## Testing
 
@@ -68,8 +69,7 @@
 
 ### Running Tests and Linter
 
-- Execution must be done within a virtualenv environment
-- If a virtualenv environment is not available, it must be created
+- Execute all tests within a virtualenv environment. Create it if missing.
 
 ### Test Structure
 
@@ -90,16 +90,20 @@
 ### Test Types
 
 - **Unit** — every public function/method/class, main scenario and typical data
-- **Edge cases** — empty inputs (`None`, `""`, `[]`, `{}`), boundary values (`0`, negative, very large), invalid types, expected exceptions via `pytest.raises`
+- **Edge cases**:
+  - Empty inputs: `None`, `""`, `[]`, `{}`
+  - Boundary values: `0`, negative, very large
+  - Invalid types
+  - Expected exceptions via `pytest.raises`
 - **Integration** — only for interaction between modules/packages
 
 ### REST API Testing
 
-- Endpoint testing is performed by calling the handler function directly (not via HTTP client).
+- Test endpoints by calling the handler function directly via Python call.
 
 ### CLI Testing
 
-- CLI command testing is performed by calling the command handler function directly, without using external execution interfaces.
+- Test CLI commands by calling the command handler function directly via Python call.
 
 ### Boundary Tests
 
@@ -108,16 +112,18 @@
 ### Mocks
 
 - Pure logic — no mocks
-- File I/O — `tmp_path` fixture, **never mock `builtins.open`**
+- File I/O — use the `tmp_path` fixture exclusively
 - Subprocesses — `mock.patch` the subprocess call
 - External dependencies — `mock.patch` at the import point
 
 ### Miscellaneous
 
-- Minimal comments — test names must be self-documenting
-- Integration tests with external dependencies use `pytest.mark.skipif` when tools are unavailable
+- Use self-documenting test names. Keep comments minimal.
+- Skip integration tests with unavailable external dependencies via `pytest.mark.skipif`
 
 ## Validation Commands
+
+All commands must run in a virtualenv environment. Python 3.10+ compatibility required.
 
 | Purpose                  | Command                                   |
 |--------------------------|-------------------------------------------|
