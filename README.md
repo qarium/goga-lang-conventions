@@ -14,7 +14,7 @@ Annotations: |
   Use `conditions` to write code rules and tests.
 ```
 
-**As a local usage file**:
+**As a local usage file in CODEMANIFEST**:
 
 1. Download the file
 
