@@ -1,122 +1,132 @@
-# Общие соглашения
+# General Conventions
 
-## Разработка
+## Development
 
-### Ограничения
+### Constraints
 
-- Код должен быть совместим с python версии 3.10 и выше
+- Code must be compatible with Python 3.10 and above
 
-### Запуск и отладка
+### Running and Debugging
 
-- Запуск кода необходимо делать через virtualenv окружение
-- Если virtualenv окружение не доступно - его необходимо создать
+- Code must be executed within a virtualenv environment
+- If a virtualenv environment is not available, it must be created
 
-### Импорты
+### Imports
 
-- Необходимо **СТРОГО** использовать относительные импорты (relative imports)
+- **STRICTLY** use relative imports
 
-### Модели данных
+### Data Models
 
-- Для описания структур данных и моделей запросов/ответов используется библиотека pydantic
-- Все классы моделей данных должны быть kw_only=True
-- Структуры создаются с пустыми данными по умолчанию (пустая строка, ноль и тд), если явно не указано None
+- The pydantic library is used to describe data structures and request/response models
+- All data model classes must use kw_only=True
+- Structures are created with empty defaults (empty string, zero, etc.) unless None is explicitly specified
 
-### Форматирование кода
+### Code Formatting
 
-- Внутри тел функций и методов логические блоки разделяются **одной пустой строкой**:
-  - Инициализация переменных отделяется от условных конструкций и циклов
-  - Циклы и условия не «приклеиваются» друг к другу без пробела
-  - Подготовка данных отделяется от их обработки
-  - Обработка отделяется от возврата результата
-  - Если блок кода визуально сливается в «стену текста» — добавь пустую строку для читаемости
+- Inside function and method bodies, logical blocks are separated by **one blank line**:
+  - Variable initialization is separated from conditional constructs and loops
+  - Loops and conditions must be separated by a blank line
+  - Data preparation is separated from its processing
+  - Processing is separated from returning the result
+  - If a block of code becomes visually dense or hard to read — add a blank line for readability
 
-### Докстринги
+### Docstrings
 
-- Все публичные функции, методы и классы **ОБЯЗАНЫ** иметь докстринги
-- Формат докстрингов — **Google style**:
+- All public functions, methods, and classes **MUST** have docstrings
+- Docstring format — **Google style**:
   ```python
   def function_name(param1: str, param2: int = 0) -> bool:
-      """Краткое описание функции.
+      """Brief description of the function.
 
-      Подробное описание при необходимости.
+      Detailed description when necessary.
 
       Args:
-          param1: Описание первого параметра.
-          param2: Описание второго параметра.
+          param1: Description of the first parameter.
+          param2: Description of the second parameter.
 
       Returns:
-          Описание возвращаемого значения.
+          Description of the return value.
 
       Raises:
-          ValueError: Описание условия возникновения исключения.
+          ValueError: Condition that triggers this exception.
       """
   ```
-- Краткое описание (первая строка) — обязательно, начинается с заглавной буквы, заканчивается точкой
-- Секции `Args`, `Returns`, `Raises` — только если функция принимает аргументы, возвращает значение или порождает исключения
+- The brief description (first line) is required, starts with a capital letter, and ends with a period
+- The `Args`, `Returns`, `Raises` sections — only if the function accepts arguments, returns a value, or raises exceptions
 
-## Тестирование
+## Testing
 
-### Ограничения
-- Код тестов должен быть совместим с python версии 3.10 и выше
+### Constraints
 
-### Инструменты
+- Test code must be compatible with Python 3.10 and above
 
-- pytest — запуск тестов
-- ruff — линтинг и форматирование тестового кода
-- pytest-cov — покрытие
+### Tools
 
-### Запуск тестов и линтера
+- pytest — running tests
+- ruff — linting and formatting test code
+- pytest-cov — coverage
 
-- Запуск необходимо делать через virtualenv окружение
-- Если virtualenv окружение не доступно - его необходимо создать
+### Running Tests and Linter
 
-### Структура тестов
-- Тесты зеркалируют структуру исходного кода **напрямую**, без промежуточного каталога корневого пакета:
+- Execution must be done within a virtualenv environment
+- If a virtualenv environment is not available, it must be created
+
+### Test Structure
+
+- Tests mirror the source code structure **directly**, without an intermediate root package directory:
   - `<src>/module/file.py` → `tests/module/test_file.py`
-  - Каталог `tests/` содержит подкаталоги, соответствующие вложенным пакетам корневого пакета
-  - Тесты корневых модулей пакета (`__main__.py`, `__init__.py`) размещаются напрямую в `tests/` (например, `tests/test_main.py`)
-- Каждый новый каталог тестов содержит `__init__.py`
-- Фикстуры располагаются в `tests/<package>/conftest.py` (локальные) или `tests/conftest.py` (глобальные, только для общих фикстур)
-- Интеграционные тесты, охватывающие несколько пакетов, размещаются напрямую в `tests/` (например, `tests/test_integration.py`, `tests/test_integration_<scenario>.py`)
+  - The `tests/` directory contains subdirectories corresponding to nested packages of the root package
+  - Tests for root package modules (`__main__.py`, `__init__.py`) are placed directly in `tests/` (e.g., `tests/test_main.py`)
+- Each new test directory contains an `__init__.py`
+- Fixtures are located in `tests/<package>/conftest.py` (local) or `tests/conftest.py` (global, only for shared fixtures)
+- Integration tests covering multiple packages are placed directly in `tests/` (e.g., `tests/test_integration.py`, `tests/test_integration_<scenario>.py`)
 
-### Именование
-- Файлы: `test_<module>.py`
-- Функции: `test_<what>_<scenario>` (например, `test_complexity_with_empty_input`)
-- Группировка: `class Test<Component>:`
+### Naming
 
-### Типы тестов
-- **Unit** — каждая публичная функция/метод/класс, основной сценарий и типичные данные
-- **Edge cases** — пустые входы (`None`, `""`, `[]`, `{}`), граничные значения (`0`, отрицательные, очень большие), невалидные типы, ожидаемые исключения через `pytest.raises`
-- **Integration** — только при взаимодействии между модулями/пакетами
+- Files: `test_<module>.py`
+- Functions: `test_<what>_<scenario>` (e.g., `test_complexity_with_empty_input`)
+- Grouping: `class Test<Component>:`
 
-### Тестирование REST API речек
+### Test Types
 
-Тестирование ручки происходит с помощью вызова функции handler-а, без участия сетевого интерфейса.
+- **Unit** — every public function/method/class, main scenario and typical data
+- **Edge cases** — empty inputs (`None`, `""`, `[]`, `{}`), boundary values (`0`, negative, very large), invalid types, expected exceptions via `pytest.raises`
+- **Integration** — only for interaction between modules/packages
 
-### Граничные тесты
-- Для порогов, диапазонов, переходов состояний — использовать `@pytest.mark.parametrize` с таблицей значений, включающей каждую границу
+### REST API Testing
 
-### Моки
-- Чистая логика — без моков
-- Файловый I/O — фикстура `tmp_path`, **никогда не мокать `builtins.open`**
-- Субпроцессы — `mock.patch` вызова subprocess
-- Внешние зависимости — `mock.patch` в точке импорта
+- Endpoint testing is performed by calling the handler function directly (not via HTTP client).
 
-### Прочее
-- Минимум комментариев — название теста должно быть самодокументируемым
-- Интеграционные тесты с внешними зависимостями используют `pytest.mark.skipif` при недоступности инструментов
+### CLI Testing
 
-## Команды валидации
+- CLI command testing is performed by calling the command handler function directly, without using external execution interfaces.
 
-| Назначение                | Команда                                  |
-|---------------------------|------------------------------------------|
-| Запустить все тесты       | `pytest tests/ -x`                       |
-| Запустить конкретный тест | `pytest tests/test_<name>.py -v`         |
-| Линт                      | `ruff check <src>/`                        |
-| Проверка фасада           | `python -c "from package import Entity"` |
+### Boundary Tests
 
-## Зависимости
+- For thresholds, ranges, state transitions — use `@pytest.mark.parametrize` with a table of values including each boundary
 
-Все сторонние библиотеки нужно **ОБЯЗАТЕЛЬНО** добавлять в `pyproject.toml` с указанием минимальной
-версии если это критично необходимо для обратной совместимости.
-Зависимости для тестирования указывать отдельно в секции `[project.optional-dependencies]` под ключом `test`.
+### Mocks
+
+- Pure logic — no mocks
+- File I/O — `tmp_path` fixture, **never mock `builtins.open`**
+- Subprocesses — `mock.patch` the subprocess call
+- External dependencies — `mock.patch` at the import point
+
+### Miscellaneous
+
+- Minimal comments — test names must be self-documenting
+- Integration tests with external dependencies use `pytest.mark.skipif` when tools are unavailable
+
+## Validation Commands
+
+| Purpose                  | Command                                   |
+|--------------------------|-------------------------------------------|
+| Run all tests            | `pytest tests/ -x`                        |
+| Run a specific test      | `pytest tests/test_<name>.py -v`          |
+| Lint                     | `ruff check <src>/`                       |
+| Facade check             | `python -c "from package import Entity"`  |
+
+## Dependencies
+
+All third-party libraries **MUST** be added to `pyproject.toml` with a minimum version specified if it is critical for backward compatibility.
+Testing dependencies must be specified separately in the `[project.optional-dependencies]` section under the `test` key.
