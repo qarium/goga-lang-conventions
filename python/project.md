@@ -43,7 +43,7 @@ Allowed:
 Logging Principles:
 - Use structured logging where possible
 
-Operational logs MUST:
+Operational logs **MUST**:
 - include contextual metadata
 - be machine-readable
 - support filtering and aggregation
