@@ -2,6 +2,23 @@
 
 Mandatory rules for all Python code in this project.
 
+## Engineering Philosophy
+
+Code in this repository MUST prioritize:
+- readability
+- explicitness
+- predictable control flow
+- maintainability
+- operational stability
+
+## Simplicity Rules
+
+Prefer:
+- explicit code
+- stable abstractions
+- predictable behavior
+- straightforward control flow
+
 ---
 
 # Development
