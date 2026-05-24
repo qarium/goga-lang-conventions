@@ -1,23 +1,14 @@
 # General Conventions
 
-Mandatory rules for all Python code in this project.
+Mandatory rules for all Python code in this project. Strict deterministic specification.
 
-## Engineering Philosophy
+## Engineering Principles
 
 Code in this repository MUST prioritize:
-- readability
-- explicitness
-- predictable control flow
-- maintainability
-- operational stability
-
-## Simplicity Rules
-
-Prefer:
-- explicit code
+- readable, explicit code
+- predictable, straightforward control flow
 - stable abstractions
-- predictable behavior
-- straightforward control flow
+- operational stability and maintainability
 
 ---
 
@@ -25,27 +16,44 @@ Prefer:
 
 ## Constraints
 
-- Code must be compatible with Python 3.10 and above
+- Compatible with Python 3.10 and above only
 - Use `pyproject.toml` for configuration
-
-## Running and Debugging
-
-- Execute all code within a virtualenv environment. Create it if missing.
+- Execute all code within a virtualenv environment — create it if missing
 
 ## Imports
 
-- **STRICTLY** use relative imports
+RULES:
+1. Use relative imports for all intra-package references
+2. Use absolute imports only for stdlib and third-party packages
+
+```python
+# Valid: intra-package
+from .models import User
+from ..utils import helper
+
+# Valid: stdlib and third-party
+import logging
+from pydantic import BaseModel
+
+# Forbidden: absolute import within the same package
+from myapp.models import User
+```
+
+All subsequent import patterns MUST follow relative imports for intra-package references.
 
 ## Data Models
 
-- Use pydantic for data models and request/response schemas
-- All data model classes must use `kw_only=True` (Python 3.10+ syntax)
-- Set empty defaults (empty string, zero, etc.) for all fields. Use `None` only where explicitly required.
+RULES:
+1. Use pydantic for all data models and request/response schemas
+2. All data model classes MUST use `kw_only=True` (Python 3.10+ syntax)
+3. Set empty defaults (empty string, zero, etc.) for all fields — use `None` only for fields that represent the explicit absence of a value
 
 ## Logging
 
-Preferred standard:
-- logging
+RULES:
+1. Use `logging` as the default logging library
+2. Use `structlog` when structured logging is required across the service
+3. Use `loguru` only in single-file CLI utilities with a single entry point
 
 ```python
 import logging
@@ -53,19 +61,10 @@ import logging
 logger = logging.getLogger(__name__)
 ```
 
-Allowed:
-- structlog for structured logging
-- loguru only in standalone CLI utilities or scripts
-
-Logging Principles:
-- Use structured logging where possible
-
 Operational logs **MUST**:
 - include contextual metadata
 - be machine-readable
 - support filtering and aggregation
-
-Prefer:
 
 ```python
 logger.info(
@@ -76,6 +75,8 @@ logger.info(
     },
 )
 ```
+
+All log output MUST follow structured format with contextual metadata.
 
 Formatting:
 - lowercase messages
@@ -116,54 +117,69 @@ Use WARNING when:
 - degraded behavior is detected
 - unexpected input is received
 
+### ERROR
+
+ERROR is used when an operation cannot be completed.
+
 Use ERROR when:
 - a request fails
 - data cannot be persisted
 - external dependency prevents operation completion
 - invariant violation affects functionality
 
+### CRITICAL
+
+CRITICAL is reserved for conditions requiring immediate operator intervention.
+
 Use CRITICAL only when:
-- the process cannot continue
-- data corruption is possible
-- critical infrastructure is unavailable
-- operator intervention is required immediately
+- the process cannot continue execution
+- data corruption is detected or imminent
+- core infrastructure dependencies are unreachable
+- manual operator intervention is required within minutes
+
+### Log Content Restrictions
+
+Log messages MUST contain only non-sensitive operational data. Exclude secrets, credentials, tokens, and personal sensitive data from all log output.
 
 ## Code Formatting
 
-- Inside function and method bodies, logical blocks are separated by **one blank line**:
-  - Variable initialization is separated from conditional constructs and loops
-  - Loops and conditions must be separated by a blank line
-  - Data preparation is separated from its processing
-  - Processing is separated from returning the result
-  - Add a blank line for visually dense or hard-to-read blocks
+Inside function and method bodies, logical blocks are separated by **one blank line**:
+- Variable initialization is separated from conditional constructs and loops
+- Loops and conditions are separated by a blank line
+- Data preparation is separated from its processing
+- Processing is separated from returning the result
 
 ## Docstrings
 
-- All public functions, methods, and classes **MUST** have docstrings
-- Docstring format — **Google style**:
-  ```python
-  def function_name(param1: str, param2: int = 0) -> bool:
-      """Brief description of the function.
+All public functions, methods, and classes **MUST** have docstrings. Format — **Google style**:
 
-      Detailed description when necessary.
+```python
+def function_name(param1: str, param2: int = 0) -> bool:
+    """Brief description of the function.
 
-      Args:
-          param1: Description of the first parameter.
-          param2: Description of the second parameter.
+    Detailed description when necessary.
 
-      Returns:
-          Description of the return value.
+    Args:
+        param1: Description of the first parameter.
+        param2: Description of the second parameter.
 
-      Raises:
-          ValueError: Condition that triggers this exception.
-      """
-  ```
-- The brief description (first line) is required, starts with a capital letter, and ends with a period
-- Include `Args`, `Returns`, `Raises` sections only where applicable
+    Returns:
+        Description of the return value.
+
+    Raises:
+        ValueError: Condition that triggers this exception.
+    """
+```
+
+Docstring rules:
+- The first line is required, starts with a capital letter, ends with a period
+- Include `Args` section when the function accepts parameters
+- Include `Returns` section when the function returns a value
+- Include `Raises` section when the function raises exceptions beyond built-in types
 
 ## Dependencies
 
-All third-party libraries **MUST** be added to `pyproject.toml` with a minimum version specified if it is critical for backward compatibility.
+All third-party libraries **MUST** be added to `pyproject.toml`. Specify a minimum version for every dependency.
 
 ---
 
@@ -179,19 +195,21 @@ All third-party libraries **MUST** be added to `pyproject.toml` with a minimum v
 - ruff — linting and formatting test code
 - pytest-cov — coverage
 
-## Running Tests and Linter
+## Running Tests
 
-- Execute all tests within a virtualenv environment. Create it if missing.
+- Execute all tests within a virtualenv environment — create it if missing
 
 ## Test Structure
 
-- Tests mirror the source code structure **directly**, without an intermediate root package directory:
-  - `<src>/module/file.py` → `tests/module/test_file.py`
-  - The `tests/` directory contains subdirectories corresponding to nested packages of the root package
-  - Tests for root package modules (`__main__.py`, `__init__.py`) are placed directly in `tests/` (e.g., `tests/test_main.py`)
-- Each new test directory contains an `__init__.py`
-- Fixtures are located in `tests/<package>/conftest.py` (local) or `tests/conftest.py` (global, only for shared fixtures)
-- Integration tests covering multiple packages are placed directly in `tests/` (e.g., `tests/test_integration.py`, `tests/test_integration_<scenario>.py`)
+Tests mirror the source code structure **directly**, without an intermediate root package directory:
+- `<src>/module/file.py` → `tests/module/test_file.py`
+- The `tests/` directory contains subdirectories corresponding to nested packages of the root package
+- Tests for root package modules (`__main__.py`, `__init__.py`) are placed directly in `tests/` (e.g., `tests/test_main.py`)
+
+RULES:
+1. Each test directory MUST contain an `__init__.py`
+2. Place local fixtures in `tests/<package>/conftest.py`, shared fixtures in `tests/conftest.py`
+3. Place integration tests covering multiple packages directly in `tests/` (e.g., `tests/test_integration.py`)
 
 ## Naming
 
@@ -211,32 +229,33 @@ All third-party libraries **MUST** be added to `pyproject.toml` with a minimum v
 
 ## REST API Testing
 
-- Test endpoints by calling the handler function directly via Python call.
+Test endpoints by calling the handler function directly via Python call.
 
 ## CLI Testing
 
-- Test CLI commands by calling the command handler function directly via Python call.
+Test CLI commands by calling the command handler function directly via Python call.
 
 ## Boundary Tests
 
-- For thresholds, ranges, state transitions — use `@pytest.mark.parametrize` with a table of values including each boundary
+For thresholds, ranges, state transitions — use `@pytest.mark.parametrize` with a table of values including each boundary.
 
 ## Mocks
 
-- Pure logic — no mocks
+- Pure logic — write tests without mocks
 - File I/O — use the `tmp_path` fixture exclusively
 - Subprocesses — `mock.patch` the subprocess call
 - External dependencies — `mock.patch` at the import point
+
+Mock only at external boundaries. Keep business logic tests mock-free.
 
 ## Miscellaneous
 
 - Use self-documenting test names. Keep comments minimal.
 - Skip integration tests with unavailable external dependencies via `pytest.mark.skipif`
 
-# Dependencies
+## Dependencies
 
-All libraries for testings **MUST** be added to `pyproject.toml`
-Testing dependencies must be specified separately in the `[project.optional-dependencies]` section under the `test` key.
+All test libraries **MUST** be added to `pyproject.toml` in the `[project.optional-dependencies]` section under the `test` key.
 
 ---
 
