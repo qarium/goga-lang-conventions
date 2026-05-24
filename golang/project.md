@@ -262,7 +262,7 @@ Prefer hand-written fakes over generated mocks.
 ## Test Structure
 
 Tests mirror the source code structure **directly**:
-- `<module>/service.go` → `<module>/service_test.go`
+- `<module>/<file>.go` → `<module>/<file>_test.go`
 - Test files reside in the same package as the code they test
 - Shared test helpers are placed in `<module>/testutil/` or `<module>/testdata/`
 - Integration tests for external dependencies are placed in `tests/integration/`
