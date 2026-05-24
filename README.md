@@ -44,3 +44,13 @@ Annotations: |
 | **Stack** | Python 3.10+, pyproject.toml, pydantic, ruff, pytest                                                    |
 
 Rules for Python projects: code and test structure, imports, data models, formatting, logging, docstrings, dependencies.
+
+### Golang — Project
+
+|          |                                                                                                          |
+|----------|----------------------------------------------------------------------------------------------------------|
+| **File** | `golang/project.md`                                                                                      |
+| **URL**  | [raw](https://raw.githubusercontent.com/qarium/goga-lang-conventions/refs/heads/0.0.x/golang/project.md) |
+| **Stack** | Go 1.23+, go.mod, slog/zap, goimports, golangci-lint, testify                                            |
+
+Rules for Go projects: code and test structure, imports, dependency injection, context usage, error handling, logging, concurrency, formatting, documentation, dependencies.
