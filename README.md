@@ -43,4 +43,4 @@ Annotations: |
 | **URL**  | [raw](https://raw.githubusercontent.com/qarium/goga-lang-conventions/refs/heads/0.0.x/python/project.md) |
 | **Stack** | Python 3.10+, pyproject.toml, pydantic, ruff, pytest                                                    |
 
-Rules for Python projects: code and test structure, imports, data models, formatting, docstrings, dependencies.
+Rules for Python projects: code and test structure, imports, data models, formatting, logging, docstrings, dependencies.
