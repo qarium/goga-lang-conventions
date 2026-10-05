@@ -273,6 +273,8 @@ export async function createUser(name, config) {}
 ```
 
 JSDoc rules:
+- Keep comments brief — one point per comment
+- Use professional technical language and be concise
 - `@param` with type annotations for all parameters
 - `@returns` with type annotations for return values
 - `@throws` for documented exceptions

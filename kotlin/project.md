@@ -352,6 +352,8 @@ fun createUser(request: CreateUserRequest): Outcome<UserError, User>
 
 Comments SHOULD explain intent, invariants, and non-obvious decisions.
 Comments SHOULD NOT restate code behavior.
+Comments SHOULD be brief — one point per comment.
+Comments SHOULD use professional technical language and be concise.
 
 ## Dependencies
 
